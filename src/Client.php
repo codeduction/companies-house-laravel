@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace JustSteveKing\CompaniesHouse;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
-use JustSteveKing\CompaniesHouse\DTO\Search;
-use JustSteveKing\CompaniesHouse\DTO\Company;
-use JustSteveKing\CompaniesHouse\DTO\Officer;
-use JustSteveKing\CompaniesHouse\Concerns\HasFake;
+use Illuminate\Support\Facades\Http;
 use JustSteveKing\CompaniesHouse\Actions\Company\CreateCompany;
 use JustSteveKing\CompaniesHouse\Actions\Officer\CreateOfficer;
-use JustSteveKing\CompaniesHouse\Collections\OfficersCollection;
+use JustSteveKing\CompaniesHouse\Actions\PersonSignificantControl\CreatePersonSignificantControl;
 use JustSteveKing\CompaniesHouse\Actions\Search\CreateSearchResults;
+use JustSteveKing\CompaniesHouse\Collections\OfficersCollection;
+use JustSteveKing\CompaniesHouse\Collections\PeopleSignificantControlCollection;
+use JustSteveKing\CompaniesHouse\Concerns\HasFake;
+use JustSteveKing\CompaniesHouse\DTO\Company;
+use JustSteveKing\CompaniesHouse\DTO\Officer;
+use JustSteveKing\CompaniesHouse\DTO\PersonSignificantControl;
+use JustSteveKing\CompaniesHouse\DTO\Search;
 
 class Client
 {
     use HasFake;
-    
+
     /**
      * Client constructor.
      *
@@ -254,7 +257,7 @@ class Client
         if (! $response->successful()) {
             return $response->toException();
         }
-        
+
         $data = $response->json();
 
         $officerColection = new OfficersCollection();
@@ -267,7 +270,7 @@ class Client
             $officer = (new CreateOfficer())->handle(
                 item: $item,
             );
-            
+
             $officerColection->add(
                 item: $officer,
             );
@@ -309,5 +312,63 @@ class Client
         );
 
         return $officer;
+    }
+
+    public function peopleSignificantControl(
+        string $companyNumber
+    ): PeopleSignificantControlCollection|RequestException {
+        $request = $this->buildRequest();
+
+        $response = $request->get(
+            url: "{$this->url}/company/{$companyNumber}/persons-with-significant-control"
+        );
+
+        if (! $response->successful()) {
+            return $response->toException();
+        }
+
+        $data = $response->json();
+
+        $peopleSignificantControlCollection = new PeopleSignificantControlCollection();
+        if (is_null($data)) {
+            return $peopleSignificantControlCollection;
+        }
+
+        foreach ($data['items'] as $item) {
+            $personSignificantControl = (new CreatePersonSignificantControl())->handle(
+                item: $item
+            );
+
+            $peopleSignificantControlCollection->add(
+                item: $personSignificantControl
+            );
+        }
+
+        return $peopleSignificantControlCollection;
+    }
+    
+    public function personSignificantControl(
+        string $companyNumber,
+        string $pscId
+    ): PersonSignificantControl|RequestException {
+        $request = $this->buildRequest();
+
+        $response = $request->get(
+            url: "{$this->url}/company/$companyNumber/persons-with-significant-control/individual/$pscId"
+        );
+
+        if (! $response->successful()) {
+            return $response->toException();
+        }
+
+        if (is_null($response->json())) {
+            return new PersonSignificantControl();
+        }
+
+        $psc = (new CreatePersonSignificantControl())->handle(
+            item: $response->json(),
+        );
+
+        return $psc;
     }
 }
