@@ -62,4 +62,14 @@ class PersonSignificantControl extends DataTransferObject
             search: 'individual/',
         );
     }
+
+    public function getForename(): string
+    {
+        return $this->nameElements['forename'];
+    }
+
+    public function getSurname(): string
+    {
+        return $this->nameElements['surname'];
+    }
 }
