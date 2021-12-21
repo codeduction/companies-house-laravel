@@ -1,15 +1,14 @@
 {
-    "name": "juststeveking/companies-house-laravel",
+    "name": "acceptacard/companies-house-laravel",
     "description": "A Laravel wrapper to get companies house information and validate company numbers",
     "keywords": [
-        "juststeveking",
         "companies-house-laravel",
         "api",
         "validation",
         "integration",
         "companies house"
     ],
-    "homepage": "https://github.com/juststeveking/companies-house-laravel",
+    "homepage": "https://github.com/acceptacard/companies-house-laravel",
     "license": "MIT",
     "authors": [
         {
