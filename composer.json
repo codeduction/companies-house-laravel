@@ -1,5 +1,5 @@
 {
-    "name": "acceptacard/companies-house-laravel",
+    "name": "codeduction/companies-house-laravel",
     "description": "A Laravel wrapper to get companies house information and validate company numbers",
     "keywords": [
         "companies-house-laravel",
@@ -8,7 +8,7 @@
         "integration",
         "companies house"
     ],
-    "homepage": "https://github.com/acceptacard/companies-house-laravel",
+    "homepage": "https://github.com/codeduction/companies-house-laravel",
     "license": "MIT",
     "authors": [
         {
